@@ -1,16 +1,20 @@
 /* Reset & base styles */
 * {
   box-sizing: border-box;
-}
-body {
   margin: 0;
+  padding: 0;
+}
+
+body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f3f4f6;
   color: #1e293b;
+  user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Header */
 header {
   background-color: #2563eb;
   color: white;
@@ -20,13 +24,29 @@ header {
   padding: 18px 0;
   user-select: none;
   box-shadow: 0 3px 8px rgb(37 99 235 / 0.5);
+  position: relative;
 }
+
+header button#dark-mode-toggle {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-weight: 700;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Subheader */
 .subheader {
   font-weight: 500;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   color: #555;
-  margin-top: 4px;
-  margin-bottom: 20px;
+  margin: 15px 0 20px;
   text-align: center;
 }
 
@@ -44,13 +64,14 @@ header {
 
 /* Sidebar */
 #sidebar {
-  width: 140px;
-  background: #1e293b; /* dark slate blue */
-  color: #cbd5e1; /* light slate */
+  width: 220px;
+  background: #1e293b;
+  color: #cbd5e1;
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
   user-select: none;
+  border-right: 1px solid #334155;
 }
 
 #sidebar h2 {
@@ -61,7 +82,7 @@ header {
   color: #e0e7ff;
 }
 
-/* Question nav buttons */
+/* Question nav buttons (sidebar) */
 #question-nav {
   display: flex;
   flex-wrap: wrap;
@@ -90,13 +111,47 @@ header {
 }
 
 #question-nav button.answered {
-  background: #2563eb; /* bright blue */
+  background: #2563eb;
   color: white;
   box-shadow: 0 3px 10px rgb(37 99 235 / 0.7);
 }
 
 #question-nav button.current {
-  outline: 3px solid #facc15; /* bright yellow */
+  outline: 3px solid #facc15;
+  outline-offset: 1px;
+}
+
+/* Mobile question nav - hidden on desktop */
+#question-nav-mobile {
+  display: none;
+  gap: 8px;
+  margin-bottom: 15px;
+  overflow-x: auto;
+  height: 80px; /* two rows */
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 36px);
+  gap: 8px;
+  display: grid;
+}
+
+#question-nav-mobile button {
+  width: 40px;
+  height: 36px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+  background: #475569;
+  color: #e0e7ff;
+}
+
+#question-nav-mobile button.answered {
+  background: #2563eb;
+  color: white;
+}
+
+#question-nav-mobile button.current {
+  outline: 3px solid #facc15;
   outline-offset: 1px;
 }
 
@@ -110,7 +165,7 @@ header {
   position: relative;
 }
 
-/* Timer (top right) */
+/* Timer */
 #timer {
   align-self: flex-end;
   font-weight: 700;
@@ -121,7 +176,7 @@ header {
   user-select: none;
 }
 
-/* Quiz container layout */
+/* Quiz container */
 #quiz-container {
   flex-grow: 1;
   display: flex;
@@ -179,7 +234,7 @@ header {
   box-shadow: 0 5px 20px rgb(37 99 235 / 0.8);
 }
 
-/* Navigation buttons container */
+/* Navigation buttons */
 #navigation {
   display: flex;
   justify-content: space-between;
@@ -211,7 +266,7 @@ header {
   box-shadow: none;
 }
 
-/* Submit button is only visible on last question */
+/* Submit button */
 #submit-btn {
   min-width: 100px;
 }
@@ -298,26 +353,50 @@ header {
   border-radius: 4px;
 }
 
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  #sidebar {
-    display: none;
-  }
-
-  /* Optionally, make the quiz container take full width */
-  #quiz-container {
-    width: 100%;
-    flex-direction: column; /* if using flex */
-  }
+/* Start screen */
+#start-screen {
+  background-color: #f3f4f6;
+  color: #1e293b;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 1100px;
+  margin: 25px auto;
+  box-shadow: 0 16px 30px rgb(0 0 0 / 0.1);
+  border-radius: 12px;
+  user-select: none;
 }
 
+#start-screen h1 {
+  font-size: 2.4rem;
+  margin-bottom: 10px;
+  color: #2563eb;
+}
 
+#start-screen button {
+  padding: 12px 28px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgb(37 99 235 / 0.7);
+  transition: background-color 0.3s ease;
+}
 
-/* Dark Mode Styles */
+#start-screen button:hover {
+  background-color: #1e40af;
+}
+
+/* Dark mode overrides */
 body.dark-mode {
   background: #1e293b;
   color: #cbd5e1;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body.dark-mode header {
@@ -338,6 +417,7 @@ body.dark-mode #app {
 body.dark-mode #sidebar {
   background: #0f172a;
   color: #94a3b8;
+  border-right-color: #475569;
 }
 
 body.dark-mode #sidebar h2 {
@@ -355,13 +435,13 @@ body.dark-mode #question-nav button:hover {
 }
 
 body.dark-mode #question-nav button.answered {
-  background: #3b82f6; /* bright blue */
+  background: #3b82f6;
   color: #e0e7ff;
   box-shadow: 0 3px 10px rgb(59 130 246 / 0.8);
 }
 
 body.dark-mode #question-nav button.current {
-  outline: 3px solid #fde68a; /* pale yellow */
+  outline: 3px solid #fde68a;
   outline-offset: 1px;
 }
 
@@ -374,10 +454,7 @@ body.dark-mode #timer {
   color: #f87171;
 }
 
-body.dark-mode #question-number {
-  color: #e0e7ff;
-}
-
+body.dark-mode #question-number,
 body.dark-mode #question-text {
   color: #e0e7ff;
 }
@@ -457,4 +534,58 @@ body.dark-mode #result-container::-webkit-scrollbar {
 body.dark-mode #question-nav::-webkit-scrollbar-thumb,
 body.dark-mode #result-container::-webkit-scrollbar-thumb {
   background: #2563ebbb;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  #sidebar {
+    display: none;
+  }
+
+  #question-nav-mobile {
+    display: grid !important;
+  }
+
+  #quiz-container {
+    width: 100%;
+  }
+}
+#app {
+  height: 85vh; /* or 90vh */
+}
+#app {
+  max-width: 1100px;
+  margin: 25px auto;
+  min-height: 85vh; /* flexible height */
+  box-shadow: 0 16px 30px rgb(0 0 0 / 0.1);
+  border-radius: 12px;
+  background: white;
+  display: flex;
+  flex-direction: row;
+}
+
+#main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 40px;
+  overflow: hidden; /* keep scroll in quiz container */
+  min-height: 0; /* allow flex children to shrink properly */
+}
+
+#quiz-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;  /* enable vertical scroll if content too long */
+  padding-bottom: 20px; /* space for buttons */
+}
+
+#navigation {
+  flex-shrink: 0;  /* prevent buttons from shrinking or disappearing */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: auto; /* push buttons to bottom */
 }
