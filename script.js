@@ -713,7 +713,7 @@ const questions = [
 ];
 (function() {
   // Constants
-  const TOTAL_QUESTIONS = 50; // Limit to 35 questions
+  const TOTAL_QUESTIONS = 50; // Limit to 50 questions or fewer if less available
   const TIME_LIMIT = 45 * 60; // 45 minutes in seconds
 
   const quizContainer = document.getElementById('quiz-container');
@@ -803,7 +803,7 @@ const questions = [
       const btn = document.createElement('button');
       btn.textContent = i + 1;
 
-      if(userAnswers[i]) {
+      if(userAnswers[i] !== null) {
         btn.classList.add('answered');
       }
       if(i === currentQuestionIndex) {
@@ -836,19 +836,19 @@ const questions = [
       optionDiv.setAttribute('data-index', i);
       optionDiv.textContent = optionText;
 
-      if(userAnswers[currentQuestionIndex] === optionText) {
+      if(userAnswers[currentQuestionIndex] === i) {
         optionDiv.classList.add('selected');
         optionDiv.setAttribute('aria-checked', 'true');
       }
 
       optionDiv.addEventListener('click', () => {
-        selectOption(optionText);
+        selectOption(i);
       });
 
       optionDiv.addEventListener('keydown', (e) => {
         if(e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          selectOption(optionText);
+          selectOption(i);
         }
       });
 
@@ -856,25 +856,22 @@ const questions = [
     });
 
     prevBtn.disabled = currentQuestionIndex === 0;
-    nextBtn.disabled = userAnswers[currentQuestionIndex] === null;
+    // Allow next even if unanswered (remove restriction)
+    nextBtn.disabled = currentQuestionIndex === selectedQuestions.length - 1;
     submitBtn.style.display = currentQuestionIndex === selectedQuestions.length - 1 ? 'inline-block' : 'none';
     submitBtn.disabled = userAnswers[currentQuestionIndex] === null;
 
     renderQuestionNav();
-    nextBtn.disabled = currentQuestionIndex === selectedQuestions.length - 1;
-submitBtn.disabled = userAnswers[currentQuestionIndex] === null;
-
   }
 
-  function selectOption(optionText) {
-    userAnswers[currentQuestionIndex] = optionText;
+  function selectOption(optionIndex) {
+    userAnswers[currentQuestionIndex] = optionIndex;
 
     Array.from(optionsContainer.children).forEach(optEl => {
-      optEl.classList.toggle('selected', optEl.textContent === optionText);
-      optEl.setAttribute('aria-checked', optEl.textContent === optionText ? 'true' : 'false');
+      optEl.classList.toggle('selected', Number(optEl.getAttribute('data-index')) === optionIndex);
+      optEl.setAttribute('aria-checked', Number(optEl.getAttribute('data-index')) === optionIndex ? 'true' : 'false');
     });
 
-    nextBtn.disabled = false;
     submitBtn.disabled = false;
 
     renderQuestionNav();
@@ -908,17 +905,20 @@ submitBtn.disabled = userAnswers[currentQuestionIndex] === null;
     resultsList.innerHTML = '';
 
     selectedQuestions.forEach((q, idx) => {
-      const userAns = userAnswers[idx];
-      const isCorrect = userAns === q.correct_answer;
-      if(isCorrect) correctCount++;
+      const userAnsIndex = userAnswers[idx];
+      const isCorrect = userAnsIndex === q.answer;
+      if (isCorrect) correctCount++;
+
+      const userAnswerText = userAnsIndex !== null ? q.options[userAnsIndex] : 'No Answer';
+      const correctAnswerText = q.options[q.answer];
 
       const div = document.createElement('div');
       div.className = 'result-question';
 
       div.innerHTML = `
-        <div><strong>Q${idx+1}:</strong> ${q.question}</div>
-        <div>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAns ? userAns : 'No Answer'}</span></div>
-        ${isCorrect ? '' : `<div>Correct answer: <span class="correct">${q.correct_answer}</span></div>`}
+        <div><strong>Q${idx + 1}:</strong> ${q.question}</div>
+        <div>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAnswerText}</span></div>
+        ${isCorrect ? '' : `<div>Correct answer: <span class="correct">${correctAnswerText}</span></div>`}
       `;
 
       resultsList.appendChild(div);
@@ -930,38 +930,6 @@ submitBtn.disabled = userAnswers[currentQuestionIndex] === null;
   retryBtn.addEventListener('click', () => {
     initQuiz();
   });
-  (function() {
-  const toggleBtn = document.getElementById('dark-mode-toggle');
-  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-  // Load saved preference or system preference on page load
-  const savedTheme = localStorage.getItem('theme');
-  if(savedTheme === 'dark') {
-    document.body.classList.add('dark-mode');
-    toggleBtn.textContent = '☀️';
-  } else if(savedTheme === 'light') {
-    document.body.classList.remove('dark-mode');
-    toggleBtn.textContent = '🌙';
-  } else {
-    // No saved preference, use system preference
-    if(prefersDarkScheme.matches) {
-      document.body.classList.add('dark-mode');
-      toggleBtn.textContent = '☀️';
-    } else {
-      document.body.classList.remove('dark-mode');
-      toggleBtn.textContent = '🌙';
-    }
-  }
-
-  // Toggle dark mode on button click
-  toggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    toggleBtn.textContent = isDark ? '☀️' : '🌙';
-  });
-})();
-
 
   // Initialize quiz on page load
   initQuiz();
