@@ -808,32 +808,6 @@ function updateTimerDisplay() {
   timerEl.textContent = `Time Left: ${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
 }
 function renderQuestionNav() {
-  questionNav.innerHTML = '';
-  selectedQuestions.forEach((_, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = i + 1;
-
-    if(userAnswers[i] !== null) {
-      btn.classList.add('answered');
-    }
-    if(i === currentQuestionIndex) {
-      btn.classList.add('current');
-    }
-
-    btn.addEventListener('click', () => {
-      currentQuestionIndex = i;
-      showQuestion();
-      renderQuestionNav();
-    });
-
-    questionNav.appendChild(btn);
-  });
-
-  // Reset scroll to start so first question button is visible
-  questionNav.scrollLeft = 0;
-}
-
-function renderQuestionNav() {
   [questionNav, questionNavMobile].forEach(nav => {
     nav.innerHTML = '';
     selectedQuestions.forEach((_, i) => {
@@ -1063,3 +1037,50 @@ resultContainer.style.display = 'none';
 submitBtn.style.display = 'none';
 
 
+// === ADD KEYBOARD NAVIGATION ===
+
+document.addEventListener('keydown', function(event) {
+  // Ignore key presses if user is typing in input/textarea/button
+  const activeTag = document.activeElement.tagName.toLowerCase();
+  if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'button') {
+    return;
+  }
+
+  const key = event.key.toLowerCase();
+
+  switch(key) {
+    case 'arrowright':
+    case 'n':
+      // Next question
+      if(currentQuestionIndex < selectedQuestions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+      }
+      break;
+
+    case 'arrowleft':
+    case 'p':
+      // Previous question
+      if(currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion();
+      }
+      break;
+
+    case 'a':
+      selectOption(0);
+      break;
+    case 'b':
+      selectOption(1);
+      break;
+    case 'c':
+      selectOption(2);
+      break;
+    case 'd':
+      selectOption(3);
+      break;
+    case 'e':
+      selectOption(4);
+      break;
+  }
+});
